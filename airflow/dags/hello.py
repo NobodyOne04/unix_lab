@@ -22,11 +22,9 @@ with DAG('test_dag', default_args=default_args, schedule_interval="5 * * * *", c
  
         t2 = DockerOperator(
                 task_id='docker_command',
-                image='centos:latest',
+                image='hello-world:latest',
                 api_version='auto',
                 auto_remove=True,
-                command="/bin/sleep 30",
-                docker_url="unix://var/run/docker.sock",
                 network_mode="bridge"
         )
 
