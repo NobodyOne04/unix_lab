@@ -1,84 +1,78 @@
-from lxml import html
-from lxml import etree
 from os import listdir
 
-import os.path
+import os
 import json
 
-souce_path = "drive/MyDrive/souce/"
-save_path = "result/"
+from lxml import html
 
-prase_parameters = {
-    "Name",
-    "Rating",
-    "Description",
-    "Director",
-    "Writer",
-    "Star"
+import config
+
+temp_dict = {
+  "Name"        : None,
+  "Rating"      : None,
+  "Description" : None,
+  "Director"    : None,
+  "Writer"      : None,
+  "Star"        : None
 }
 
 def read_file(filename):
-  with open(filename, 'r' ,encoding='utf8') as file:
-    text = file.read()
-  return text
+    with open(filename, 'r' ,encoding='utf8') as file:
+        text = file.read()
+    return text
 
-def make_json(data, filename):
-  with open(filename, 'w', encoding='utf8') as file:
-    json.dump(data, file, ensure_ascii=False, indent=4)
+def save_json(data, filename):
+    with open(filename, 'w', encoding='utf8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
 def check_value(value):
-  new_value = value[0] if len(value) == 1 else value
-  new_value = delete_trash_from_string(new_value)
+    if not value: 
+        return None
 
-  if not new_value:
-    return None
+    new_value = value[0] if len(value) == 1 else value
+    new_value = formatting_value(new_value)
 
-  return new_value
+    return new_value
 
 def check_name(name):
-  new_name = name[0:-1] if name[-1] == 's' else name
-  return delete_trash_from_string(new_name)
+    name = " ".join(name.split())
+    return name[0:-1] if name[-1] == 's' else name
 
-def init_dict():
-  temp_dict = dict()
-  for item in prase_parameters:
-    temp_dict[item] = None
-
-  return temp_dict
-
-def delete_trash_from_string(string):
-    if not type(string) is list:
-      return  " ".join(string.split())
+def formatting_value(string):
+    if not isinstance(string, list):
+        return  " ".join(string.split())
     else:
-      return string
-  
+        return string[0:-1] if string[-1] == 'See full cast & crew' else string
 
 def parse_film_data(filename): 
-  result = []
-  temp_dict = init_dict()
+    tree = html.fromstring(read_file(filename))
 
-  tree = html.fromstring(read_file(filename))
+    film_name = tree.xpath('//div[@class="title_wrapper"]/h1/text()')[0]
+    film_rating = tree.xpath('//span[@itemprop="ratingValue"]/text()')
+    film_description = tree.xpath('//div[@class="summary_text"]/text()')[0]
 
-  film_name = tree.xpath('//div[@class="title_wrapper"]/h1/text()')[0]
-  film_rating = tree.xpath('//span[@itemprop="ratingValue"]/text()')
-  film_description = tree.xpath('//div[@class="summary_text"]/text()')[0]
+    temp_dict['Name'] = check_value(film_name)
+    temp_dict['Rating'] = check_value(film_rating)
+    temp_dict['Description'] = check_value(film_description)
 
-  temp_dict['Name'] = check_value(film_name)
-  temp_dict['Rating'] = check_value(film_rating)
-  temp_dict['Description'] = check_value(film_description)
+    film_data = tree.xpath('//div[@class="credit_summary_item"]')
 
-  film_data = tree.xpath('//div[@class="credit_summary_item"]')
+    for item in film_data:
+        name = item.xpath('./h4[@class="inline"]/text()')[0][0:-1]
+        value = item.xpath('./a/text()')
 
-  for item in film_data:
-    name = item.xpath('./h4[@class="inline"]/text()')[0][0:-1]
-    value = item.xpath('./a/text()')
+        temp_dict[check_name(name)] = check_value(value)
 
-    temp_dict[check_name(name)] = check_value(value)
+    return temp_dict
 
-  return temp_dict
+def start_parse():
+    if not os.path.exists(config.SAVE_PATH):
+        os.mkdir(config.SAVE_PATH)
+    files = listdir(config.SOURCE_PATH)
+    for item in files:
+        result = parse_film_data(config.SOURCE_PATH + item)
+        save_json(result, config.SAVE_PATH + item[0:-4] + '.json')
 
-def start_prase():
-  files = listdir(souce_path);
-  for item in files:
-    result = parse_film_data(souce_path + item)
-    make_json(result, save_path + item[0:-4])
+if __name__ == '__main__':
+    start_parse()
+
