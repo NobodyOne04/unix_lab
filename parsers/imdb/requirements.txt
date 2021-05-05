@@ -1,9 +1,2 @@
-jsonschema
 beautifulsoup4
 lxml
-cssselect
-jupyter
-pytest
-python-dateutil
-pytest-cov
-pandas
