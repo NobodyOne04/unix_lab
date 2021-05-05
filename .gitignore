@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Hive example data
+/loaders/data/
+
+# PyCharm files
+.idea/
