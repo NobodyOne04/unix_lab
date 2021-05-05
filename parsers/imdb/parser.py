@@ -5,28 +5,31 @@ import json
 
 from lxml import html
 
-import config
+from parsers.imdb import config
 
 temp_dict = {
-  "Name"        : None,
-  "Rating"      : None,
-  "Description" : None,
-  "Director"    : None,
-  "Writer"      : None,
-  "Star"        : None
+    "Name": None,
+    "Rating": None,
+    "Description": None,
+    "Director": None,
+    "Writer": None,
+    "Star": None
 }
 
+
 def read_file(filename):
-    with open(filename, 'r' ,encoding='utf8') as file:
+    with open(filename, 'r', encoding='utf8') as file:
         text = file.read()
     return text
+
 
 def save_json(data, filename):
     with open(filename, 'w', encoding='utf8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
+
 def check_value(value):
-    if not value: 
+    if not value:
         return None
 
     new_value = value[0] if len(value) == 1 else value
@@ -34,17 +37,20 @@ def check_value(value):
 
     return new_value
 
+
 def check_name(name):
     name = " ".join(name.split())
     return name[0:-1] if name[-1] == 's' else name
 
+
 def formatting_value(string):
     if not isinstance(string, list):
-        return  " ".join(string.split())
+        return " ".join(string.split())
     else:
         return string[0:-1] if string[-1] == 'See full cast & crew' else string
 
-def parse_film_data(filename): 
+
+def parse_film_data(filename):
     tree = html.fromstring(read_file(filename))
 
     film_name = tree.xpath('//div[@class="title_wrapper"]/h1/text()')[0]
@@ -65,6 +71,7 @@ def parse_film_data(filename):
 
     return temp_dict
 
+
 def start_parse():
     if not os.path.exists(config.SAVE_PATH):
         os.mkdir(config.SAVE_PATH)
@@ -73,6 +80,6 @@ def start_parse():
         result = parse_film_data(config.SOURCE_PATH + item)
         save_json(result, config.SAVE_PATH + item[0:-4] + '.json')
 
+
 if __name__ == '__main__':
     start_parse()
-
