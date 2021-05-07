@@ -2,19 +2,6 @@
 
 install: install_docker install_docker_compose
 
-setup:
-	@mkdir -p $$(pwd)/data/
-	@mkdir -p $$(pwd)/data/crawler
-	@mkdir -p $$(pwd)/data/parser
-	echo HOST_DATA_DIR=$$(pwd)/data > $$(pwd)/airflow/.environment 
-
-clean:
-	sudo rm -rf $$(pwd)/data/*
-
-prune:
-	docker system prune -af
-	sudo rm -rf $$(pwd)/data/*
-
 build/airflow:
 	docker build airflow -t airflow
 
@@ -56,7 +43,19 @@ airflow/down:
 airflow/up:
 	docker-compose -f $$(pwd)/airflow/docker-compose.yml up -d --scale worker=4
 
+setup:
+	@mkdir -p $$(pwd)/data/
+	@mkdir -p $$(pwd)/data/crawler
+	@mkdir -p $$(pwd)/data/parser
+	echo HOST_DATA_DIR=$$(pwd)/data > $$(pwd)/airflow/.environment
+	build/airflow
+	build/crawlers/all
+	build/parsers/all
+
 up: airflow/up
 
 down: airflow/down
 
+prune:
+	docker system prune -af
+	sudo rm -rf $$(pwd)/data/*
