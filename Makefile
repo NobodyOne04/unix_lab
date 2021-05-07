@@ -1,5 +1,16 @@
 #!make
 
+install_docker:
+	sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+	sudo apt-key fingerprint 0EBFCD88
+	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+	sudo apt-get update
+	sudo apt-get install docker-ce -y
+
+install_docker_compose:
+	sudo curl -L https://github.com/docker/compose/releases/download/1.23.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+	sudo chmod +x /usr/local/bin/docker-compose
+
 install: install_docker install_docker_compose
 
 build/airflow:
