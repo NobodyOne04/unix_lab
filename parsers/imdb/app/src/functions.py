@@ -3,7 +3,6 @@ from pathlib import Path
 
 
 def read_html_file(path_to_file: Path) -> str:
-    data: str = ''
     with open(path_to_file, 'r') as file:
         data = file.read()
     return data
