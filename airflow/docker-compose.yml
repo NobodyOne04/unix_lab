@@ -21,6 +21,8 @@ services:
         environment:
             - LOAD_EX=n
             - EXECUTOR=Local
+        env_file:
+            - .environment
         logging:
             options:
                 max-size: 10m

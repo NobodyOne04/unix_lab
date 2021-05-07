@@ -3,7 +3,10 @@ import logging
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from config import INPUT_PATH
+from config import (
+    INPUT_PATH,
+    OUTPUT_DIR,
+)
 from src.functions import (
     read_html_file,
     write_json_file,
@@ -67,7 +70,7 @@ def process() -> None:
     for file in INPUT_PATH.glob('*.html'):
         logging.debug(f'Process {file.name}')
 
-        path_to_file = INPUT_PATH / f'{file.name}.json'
+        path_to_file = OUTPUT_DIR / f'{file.name}.json'
 
         html_data = read_html_file(file)
         parsed = parse_items(html_data)

@@ -2,7 +2,7 @@ FROM aciobanu/scrapy
 USER root
 
 COPY entrypoint.sh .
-COPY imdb_spider .
+COPY app .
 
 RUN chmod +x ./entrypoint.sh
 
