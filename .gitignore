@@ -1,4 +1,5 @@
 # Byte-compiled / optimized / DLL files
+.idea
 __pycache__/
 *.py[cod]
 *$py.class
@@ -109,6 +110,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+data/*
 
 # Spyder project settings
 .spyderproject
@@ -133,3 +135,5 @@ dmypy.json
 
 # PyCharm files
 .idea/
+
+/airflow/.environment
