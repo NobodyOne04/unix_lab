@@ -1,0 +1,28 @@
+body{
+background: #222;
+}
+#searchform{
+    text-align: center;
+    margin-top: 20%;
+}
+#searchform input{
+    border-radius: 25px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    font-size: 25px;
+    width: 40%;
+}
+@media (max-width: 900px){
+    
+    #searchform{
+        text-align: center;
+        margin-top: 70%;
+    }
+    #searchform input{
+        border-radius: 25px;
+        padding: 12px 20px;
+        box-sizing: border-box;
+        font-size: 50px;
+        width: 95%;
+    }
+}

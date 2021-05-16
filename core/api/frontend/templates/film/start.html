@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static "film/css/styles.css" %}">
+    <title>MEMES</title>
+</head>
+<body>
+<form id="searchform" method="post">
+    <input name="film_name" required maxlength=40 autofocus type="text">
+    {% csrf_token %}
+</form>
+</body>
+</html>
