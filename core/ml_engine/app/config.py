@@ -2,9 +2,15 @@ import os
 
 APP_NAME = 'WORD_TO_VEC_TRAIN'
 
+
+TABLE_NAME = os.environ['TABLE_NAME']
 FILE_PATTERN = os.environ['FILE_PATTERN']
 ROW_NAME = os.environ['ROW_NAME']
-MODEL_PATH = os.environ['MODEL_PATH']
+
+HIVE_CONNECTION_ARGS = (
+    "spark.sql.uris",
+    f'{os.environ["HIVE_HOST"]}:{os.environ["HIVE_PORT"]}'
+)
 
 PREPARED_ROW_NAME = 'tokens'
 

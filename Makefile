@@ -28,6 +28,9 @@ build/parsers/all:
 build/crawlers/all:
 	$(foreach src,$(wildcard ./crawlers/*),$(MAKE) build/crawlers/$(notdir $(src)) && ) true
 
+build/loader:
+	docker build loaders -t hive_loader
+
 run/crawlers/%:
 	@mkdir -p $$(pwd)/data/crawlers/$(notdir $@)
 	docker run --rm \
@@ -54,6 +57,12 @@ airflow/down:
 airflow/up:
 	docker-compose -f $$(pwd)/airflow/docker-compose.yml up -d --scale worker=4
 
+hive/up:
+	docker-compose -f $$(pwd)/loaders/docker-hive/docker-compose.yml up -d
+
+hive/down:
+	docker-compose -f $$(pwd)/loaders/docker-hive/docker-compose.yml down
+
 setup:
 	@mkdir -p $$(pwd)/data/
 	@mkdir -p $$(pwd)/data/crawler
@@ -62,10 +71,11 @@ setup:
 	build/airflow
 	build/crawlers/all
 	build/parsers/all
+	build/loader
 
-up: airflow/up
+up: airflow/up hive/up
 
-down: airflow/down
+down: airflow/down hive/down
 
 prune:
 	docker system prune -af

@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
+import os
 
-DATA_PATH = 'data'
 
-HOST = 'localhost'
-
-PORT = 10000
-
-DB_USER = ''
-
-DB_NAME = 'FILMS_DB'
-
-TEST_DATA = False
-
-INIT_BD = True
+DATA_PATH = os.environ['DATA_PATH']
+HOST = os.environ['HOST']
+PORT = int(os.environ['PORT'])
+DB_USER = os.environ['DB_USER']
+DB_NAME = os.environ['DB_NAME']
+INIT_BD = bool(os.environ['INIT_BD'])

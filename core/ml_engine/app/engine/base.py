@@ -7,10 +7,13 @@ from pyspark.sql import (
 
 class SparkBase:
 
-    def __init__(self, app_name: str):
+    def __init__(self, app_name: str, hive_connection_args: tuple):
         self.spark = SparkSession.builder.appName(
             app_name
+        ).enableHiveSupport().config(
+            hive_connection_args
         ).getOrCreate()
+
         self.sc = SparkContext.getOrCreate()
 
     def read_json_data(self, file_pattern: str) -> DataFrame:

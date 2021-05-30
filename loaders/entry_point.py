@@ -10,7 +10,6 @@ from config import (
     PORT,
     DB_USER,
     DB_NAME,
-    TEST_DATA,
     INIT_BD
 )
 
@@ -37,6 +36,10 @@ def test_crud(connector, jsons):
     # print(connector.select_row(film_json, "FILM_CREW"))
 
 
+def process() -> None:
+    pass
+
+
 def main():
     # You can specify host, port, db_user and db_name variables here
     connector = HiveConnector(HOST, PORT, DB_USER, DB_NAME)
@@ -44,16 +47,14 @@ def main():
     parser = FilmParser(DATA_PATH)
     jsons = parser.get_films()
 
-    if TEST_DATA:
-        # You can specify data_path here
-        for film in jsons:
-            # Uncomment to see film jsons
-            # print(film)
-            connector.insert_row(film, "FILM_GENERAL")
-            connector.insert_row(film, "FILM_CREW")
+    for film in jsons:
+        # Uncomment to see film jsons
+        print(film)
+        connector.insert_row(film, "FILM_GENERAL")
+        connector.insert_row(film, "FILM_CREW")
 
     # uncomment to test crud operations
-    test_crud(connector, jsons)
+    # test_crud(connector, jsons)
 
     # uncomment to view db after insert operations
     # print(connector.show_tables())

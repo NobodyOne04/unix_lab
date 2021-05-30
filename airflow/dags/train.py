@@ -22,7 +22,7 @@ default_args = {
 with DAG('train_dag', default_args=default_args, schedule_interval="5 * * * *", catchup=False) as dag:
     wait_hive_commit = HivePartitionSensor(
         task_id='wait_hive_commit',
-        table='test',
+        table='parsed',
     )
 
     learn_task = DockerOperator(
@@ -34,7 +34,9 @@ with DAG('train_dag', default_args=default_args, schedule_interval="5 * * * *", 
         environment={
             'FILE_PATTERN': '/data/films/*.json',
             'ROW_NAME': 'Description',
-            'MODEL_PATH': '/data/models'
+            'TABLE_NAME': 'model_data',
+            'HIVE_HOST': 'localhost',
+            'HIVE_PORT': 50070,
         },
     )
 

@@ -23,7 +23,7 @@ class FilmParser:
         with open(os.path.join(path, file), 'r') as f:
             temp = json.load(f)
             film_id = os.path.basename(f.name)
-            temp['id'] = int(os.path.splitext(film_id)[0])
+            # temp['id'] = int(os.path.splitext(film_id)[0])
             temp = json.dumps(temp).replace('null', '"NULL"')
 
         return temp

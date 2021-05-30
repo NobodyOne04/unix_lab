@@ -5,10 +5,11 @@ from engine.src.functions import prepare
 from config import (
     APP_NAME,
     ROW_NAME,
-    MODEL_PATH,
+    TABLE_NAME,
     MODEL_ARGS,
     FILE_PATTERN,
     PREPARED_ROW_NAME,
+    HIVE_CONNECTION_ARGS,
 )
 
 
@@ -16,6 +17,7 @@ def main() -> None:
     logging.debug('Init spark session')
     model = SparkWord2Vec(
         APP_NAME,
+        HIVE_CONNECTION_ARGS,
         MODEL_ARGS
     )
     logging.debug('Load dataset')
@@ -29,7 +31,7 @@ def main() -> None:
     logging.debug('Train Word2Vec model')
     model.fit(df)
     logging.debug('Training completed successfully')
-    model.save(MODEL_PATH)
+    model.save(TABLE_NAME)
     logging.debug('Finish')
 
 

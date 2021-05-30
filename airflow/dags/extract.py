@@ -50,13 +50,22 @@ with DAG('extract_dag', default_args=default_args, schedule_interval="5 * * * *"
     )
 
     load_task = DockerOperator(
-        task_id='load',
-        image='hello-world:latest',
+        task_id='loader',
+        image='hive_loader:latest',
         api_version='auto',
         auto_remove=True,
         network_mode="bridge",
-        xcom_push=True,
-        xcom_all=True
+        volumes=[
+            f"{DATA_PATH}:/data"
+        ],
+        environment={
+            'DATA_PATH': '/data/parser',
+            'HOST': 'localhost',
+            'PORT': 10000,
+            'DB_USER': '',
+            'DB_NAME': 'parsed',
+            'INIT_BD': False,
+        },
     )
 
     crawler_task >> parser_task >> load_task

@@ -1,11 +1,10 @@
 import numpy as np
-from scipy.spatial.distance import cosine
-
 import pyspark.sql.functions as f
-from pyspark.ml.linalg import DenseVector
 from pyspark.ml.feature import Word2Vec
-from pyspark.sql.types import FloatType
+from pyspark.ml.linalg import DenseVector
 from pyspark.sql import DataFrame
+from pyspark.sql.types import FloatType
+from scipy.spatial.distance import cosine
 
 from engine.base import SparkBase
 from engine.src.functions import vector_to_column
@@ -13,8 +12,8 @@ from engine.src.functions import vector_to_column
 
 class SparkWord2Vec(SparkBase):
 
-    def __init__(self, app_name: str, model_args: dict):
-        super(SparkWord2Vec, self).__init__(app_name)
+    def __init__(self, app_name: str, hive_connection_args: tuple, model_args: dict):
+        super(SparkWord2Vec, self).__init__(app_name, hive_connection_args)
 
         assert model_args.get('inputCol'), 'inputCol must be specified'
         assert model_args.get('outputCol'), 'inputCol must be specified'
@@ -65,9 +64,10 @@ class SparkWord2Vec(SparkBase):
             )
         )
 
-    def save(self, path_to_mode: str) -> None:
-        # TODO: Доделать как только будет HIVE
-        raise NotImplementedError('Save method not yet defined!')
+    def save(self, table_name: str) -> None:
+        self.__vectorized.write.mode(
+            'overwrite'
+        ).saveAsTable(table_name)
 
     def get_most_similar(self, sentence: str, index_row: str, number: int = 10) -> DataFrame:
         sentence_vector = self._query_vector(sentence)
