@@ -26,13 +26,11 @@ Built for Ubuntu with Docker and docker-compose:
 
 ```sh
 make install            # Docker + docker-compose 1.23 (Ubuntu bionic, uses sudo)
-make setup              # data folders, then builds the images (see note)
+make setup              # data folders, Airflow's .environment, then builds every image
 make up                 # Airflow (4 workers) + Hive; Airflow UI on http://localhost:8080
 make down               # stop both;  make prune  wipes Docker and data/
 ```
 
-Note: `make setup` lists the build targets as shell lines, so they don't run; build the images
-with `make build/airflow build/crawlers/all build/parsers/all build/loader` instead. The Airflow
-compose file has a fixed Fernet key and default Postgres password: local use only.
+The Airflow compose file uses the default `airflow` / `airflow` Postgres login: local use only.
 
 Decisions: [docs/adr](docs/adr/README.md).

@@ -68,10 +68,7 @@ setup:
 	@mkdir -p $$(pwd)/data/crawler
 	@mkdir -p $$(pwd)/data/parser
 	echo HOST_DATA_DIR=$$(pwd)/data > $$(pwd)/airflow/.environment
-	build/airflow
-	build/crawlers/all
-	build/parsers/all
-	build/loader
+	$(MAKE) build/airflow build/crawlers/all build/parsers/all build/loader
 
 up: airflow/up hive/up
 

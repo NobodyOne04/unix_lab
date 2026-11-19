@@ -15,8 +15,9 @@ folders, and two Airflow DAGs schedule them, so each stage scales and fails on i
   Hive commit, then train → deploy. Both `schedule_interval="5 * * * *"`, `catchup=False`.
 - **Airflow**: `airflow/docker-compose.yml`, LocalExecutor with Postgres, scaled to 4 workers
   by `make airflow/up`; the Docker socket is mounted so DockerOperator can start containers.
-- **Known limits**: `make setup` lists build targets as shell lines (they don't run); the
-  compose file has a fixed Fernet key and default passwords.
+- **Known limits**: default Postgres passwords in the compose file. (Until 2026-11-19
+  `make setup` listed the build targets as shell lines, so no image was built; it now calls
+  `$(MAKE)`.)
 
 ## Technologies and alternatives
 - Involved: Docker, docker-compose 1.23, Apache Airflow (image built from `airflow/Dockerfile`), Scrapy.
