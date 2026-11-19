@@ -1,0 +1,24 @@
+# 0002. Every stage is a Docker image; Airflow runs them with DockerOperator
+
+- Status: Accepted
+- Date: 2026-11-19
+
+Crawling, parsing, loading and training are separate images that share data through mounted
+folders, and two Airflow DAGs schedule them, so each stage scales and fails on its own.
+
+## Technical details
+- **Images** (Makefile `build/*`): `crawler-imdb` (Scrapy), `parser-imdb` (BeautifulSoup,
+  lxml), `hive_loader` (PyHive, thrift-sasl), `word2vec` (PySpark), `airflow`.
+- **Data hand-off**: host `data/crawlers/<src>` → parser `INPUT_DIR`, parser `OUTPUT_DIR` →
+  `data/parserout/<src>`; `HOST_DATA_DIR` is written to `airflow/.environment`.
+- **DAGs** (`airflow/dags/`): `extract_dag` crawler → parser → loader; `train_dag` waits for a
+  Hive commit, then train → deploy. Both `schedule_interval="5 * * * *"`, `catchup=False`.
+- **Airflow**: `airflow/docker-compose.yml`, LocalExecutor with Postgres, scaled to 4 workers
+  by `make airflow/up`; the Docker socket is mounted so DockerOperator can start containers.
+- **Known limits**: `make setup` lists build targets as shell lines (they don't run); the
+  compose file has a fixed Fernet key and default passwords.
+
+## Technologies and alternatives
+- Involved: Docker, docker-compose 1.23, Apache Airflow (image built from `airflow/Dockerfile`), Scrapy.
+- Alternatives: one Python process for the whole pipeline (no isolation or scaling);
+  Kubernetes jobs (heavier than a course project needs).

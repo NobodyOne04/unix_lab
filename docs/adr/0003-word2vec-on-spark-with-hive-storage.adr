@@ -1,0 +1,24 @@
+# 0003. Recommendations from Spark Word2Vec vectors stored in Hive
+
+- Status: Accepted
+- Date: 2026-11-19
+
+Films are recommended by the cosine similarity of Word2Vec vectors trained with Spark on their
+text, with films and vectors stored in Hive so the data and training can grow beyond one machine.
+
+## Technical details
+- **Storage**: `loaders/` parses the JSON films (`FilmParser`) and inserts them into Hive via
+  PyHive (`HiveConnector`, connection from `loaders/config.py`); `loaders/docker-hive/` runs
+  Hive locally.
+- **Training** (`core/ml_engine/app/main.py`): `SparkWord2Vec` (a `SparkBase` with a Hive
+  connection) reads JSON with `FILE_PATTERN`, `prepare()` tokenises `ROW_NAME` into
+  `PREPARED_ROW_NAME`, fits `pyspark.ml.feature.Word2Vec(**MODEL_ARGS)` (default vector size
+  100), and saves vectors to `TABLE_NAME`.
+- **Similarity**: vectors become columns (`vector_to_column`) and similar films are ranked by
+  `scipy.spatial.distance.cosine`.
+- **Serving**: `core/api/` was planned and never written.
+
+## Technologies and alternatives
+- Involved: Apache Spark (PySpark ML), Apache Hive, PyHive, NumPy, SciPy.
+- Alternatives: TF-IDF + cosine in scikit-learn (simpler at this size, but doesn't scale out);
+  collaborative filtering (needs user ratings the project didn't have).
